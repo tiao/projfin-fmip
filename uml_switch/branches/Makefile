@@ -16,7 +16,7 @@ all : $(BIN)
 $(BIN) : $(OBJS)
 	$(CC) $(CFLAGS) -o $(BIN) $(OBJS)
 
-clean : 
+clean: 
 	rm -f $(BIN) $(OBJS) *~
 
 install : $(BIN)
