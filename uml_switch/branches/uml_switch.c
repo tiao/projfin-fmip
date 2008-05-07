@@ -537,7 +537,9 @@ int main(int argc, char **argv) {
 				} else if (n == 0) {
 					printf("EOF on stdin, cleaning up and exiting\n");
 					goto out;
-				}
+				} else
+					ManageMobile(buf);
+
 			} else if (fds[i].fd == connect_fd) {
 				if (fds[i].revents & POLLHUP) {
 					printf("Error on connection fd\n");

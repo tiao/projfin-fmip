@@ -15,5 +15,6 @@ extern int setup_port(int fd, void (*sender)(int fd, void *packet, int len,
 		void *data), void *data, int data_len);
 extern void handle_tap_data(int fd, int hub);
 extern void handle_sock_data(int fd, int hub);
+extern void ManageMobile(char buf);
 
 #endif

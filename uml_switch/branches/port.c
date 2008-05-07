@@ -105,13 +105,12 @@ static void send_dst(struct port *port, struct packet *packet, int len, int hub)
 		/* no cache or broadcast/multicast == all ports */
 		for (p = head; p != NULL; p = p->next) {
 			/* don't send it back the port it came in */
-
-			if (p == port) //|| (p->domain != target->domain)) // Filipe
+			if (p == port) 
 				continue;
-
-			(*p->sender)(p->control, packet, len, p->data);
+			if (p->domain == port->domain) // Filipe
+				(*p->sender)(p->control, packet, len, p->data); 
 		}
-	} else if (p->domain == target->domain) // Filipe
+	} else if (port->domain == target->domain) // Filipe
 		(*target->sender)(target->control, packet, len, target->data);
 }
 
@@ -260,4 +259,23 @@ int setup_sock_port(int fd, struct sockaddr_un *name, int data_fd) {
 			}
 			return (1);
 		}
+int mudou=0;
 
+void ManageMobile(char buf) {
+	struct port *p;
+	extern struct port *head; 
+	for (p = head; p != NULL; p = p->next) {
+		if (p->control == 5) {
+			if(mudou == 0){
+				p->domain = 0;
+				mudou = 1;
+				printf("->0\n");
+			}
+			else if(mudou == 1){
+				p->domain = 1;
+				mudou = 0;
+				printf("->1\n");
+			}
+		}
+	}
+}
