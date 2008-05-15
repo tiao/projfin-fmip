@@ -1,7 +1,8 @@
 /* Copyright 2001, 2002 Jeff Dike and others
  * Licensed under the GPL
  */
-
+#include <curses.h>
+#include <string.h>
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -411,7 +412,7 @@ int cmd_quit (char *arg);
 char *stripwhite (char *string);
 
 COMMAND commands[] = {
-  { "set", cmd_set, "Set the domain of port specified" },
+  { "set", cmd_set, "Set the domain of port specified. Usage: set port domain" },
   { "help", cmd_help, "Prints this help screen" },
   { "quit", cmd_quit, "Quit o the uml_switch" },
   { (char *)NULL, NULL, (char *)NULL }
@@ -425,16 +426,6 @@ COMMAND *find_command (char *name) {
       return (&commands[i]);
 
   return ((COMMAND *)NULL);
-}
-
-int valid_argument (char *caller, char *arg) {
-  if (!arg || !*arg)
-    {
-      printf ("%s: Argument required.\n", caller);
-      return (0);
-    }
-
-  return (1);
 }
 
 char *stripwhite (char *string) {
@@ -489,10 +480,33 @@ int execute_line (char *line) {
   return ((*(command->func)) (word));
 }
 
+int cmd_set (char *arg)
+{
+  char *p;
+  int port, domain;
+
+  if (!*arg){
+    printf ("%s: %s.\n", commands[0].name, commands[0].doc);
+    return 0;
+  }
+
+  p = strtok(arg," ");
+  printf("port=%s -> ",p);
+  port=atoi(p);
+
+  p = strtok (NULL, " ");
+  printf("domain=%s\n",p);
+  domain=atoi(p);
+
+  ManageMobile(port, domain);
+
+  return 0;
+}
+
 int cmd_quit (char *arg)
 {
   cleanup();
-  return (0);
+  exit(0);
 }
 
 /* Print out help for ARG, or for all of the commands if ARG is
@@ -672,7 +686,7 @@ int main(int argc, char **argv) {
 				}
 				
 				//n = read(0, buf, sizeof(buf));
-				line = readline ("uml_switch> " );
+				line = readline ("> " );
 				
 				if (!line)
 					break;
@@ -685,6 +699,7 @@ int main(int argc, char **argv) {
 				}
 				
 				free (line);
+				
 				//if (n < 0) {
 				//	perror("Reading from stdin");
 				//	break;

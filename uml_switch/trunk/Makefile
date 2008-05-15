@@ -2,9 +2,11 @@ TUNTAP = $(shell [ -e /usr/include/linux/if_tun.h ] && echo -DTUNTAP)
 
 OBJS = hash.o port.o uml_switch.o 
 BIN = uml_switch
-CFLAGS ?= -g -Wall
+CFLAGS ?= -g -Wall -D_REENTRANT
 override CFLAGS += $(TUNTAP)
-CC = gcc -lreadline 
+CC = gcc
+LD=gcc -lreadline -lncurses
+LDFLAGS=-g -o ${BIN}
 
 BIN_DIR ?= /usr/bin
 
@@ -15,7 +17,8 @@ endif
 all : $(BIN)
 
 $(BIN) : $(OBJS)
-	$(CC) $(CFLAGS) -o $(BIN) $(OBJS)
+#	$(CC) $(CFLAGS) -o $(BIN) $(OBJS)
+	${LD} ${LDFLAGS} ${OBJS}
 
 clean: 
 	rm -f $(BIN) $(OBJS) *~

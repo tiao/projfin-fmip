@@ -259,23 +259,16 @@ int setup_sock_port(int fd, struct sockaddr_un *name, int data_fd) {
 			}
 			return (1);
 		}
-int mudou=0;
 
-void ManageMobile(char buf) {
+int ManageMobile(int port, int domain) {
 	struct port *p;
-	extern struct port *head; 
+	extern struct port *head;
 	for (p = head; p != NULL; p = p->next) {
-		if (p->control == 5) {
-			if(mudou == 0){
-				p->domain = 0;
-				mudou = 1;
-				printf("->0\n");
-			}
-			else if(mudou == 1){
-				p->domain = 1;
-				mudou = 0;
-				printf("->1\n");
-			}
+		if (p->control == port) {
+			p->domain = domain;
+			return 0;
 		}
 	}
+	printf("Can't find port %d",port);
+	return 1;
 }
