@@ -105,13 +105,14 @@ static void send_dst(struct port *port, struct packet *packet, int len, int hub)
 		/* no cache or broadcast/multicast == all ports */
 		for (p = head; p != NULL; p = p->next) {
 			/* don't send it back the port it came in */
-			if (p == port) 
+			if ((p == port) || (port->domain == 0))
 				continue;
 			if (p->domain == port->domain) // Filipe
 				(*p->sender)(p->control, packet, len, p->data); 
 		}
-	} else if (port->domain == target->domain) // Filipe
+	} else if ((port->domain == target->domain) && (port->domain != 0)) { // Filipe
 		(*target->sender)(target->control, packet, len, target->data);
+	}
 }
 
 static void handle_data(int fd, int hub, struct packet *packet, int len,
